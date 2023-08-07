@@ -22,26 +22,6 @@ This project aims to recognize the emotion and gender of a speaker from their sp
 - Improve the model accuracy by using a larger dataset.
 - Integrate real-time audio recording and prediction in the web interface.
 
-from flask import Flask, request, jsonify
-
-app = Flask(_name_)
-
-@app.route("/calculator/greeting", methods=['GET'])
-def greeting():
-    return 'Hello world!'
-
-@app.route("/calculator/add", methods=['POST'])
-def add():
-    data = request.get_json()
-    first = data.get('first', 0)
-    second = data.get('second', 0)
-    result = first + second
-    return jsonify({"result": result})
-
-@app.route("/calculator/subtract", methods=['POST'])
-def subtract():
-    data = request.get_json()
-    first = data.get('first', 0)
     second = data.get('second', 0)
     result = first - second
     return jsonify({"result": result})
