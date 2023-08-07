@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MoodSense - Audio Upload</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .navbar{
+            align:center;
+        }
+        body {
+            background-image: url('background.jpg');
+            background-size: cover;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .title {
+            color: black;
+            font-size: 32px;
+            margin-bottom: 20px;
+            background-color: transparent;
+        }
+
+        .upload-form {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .upload-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .result-box {
+            margin-top: 30px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .result-label {
+            font-size: 24px;
+        }
+
+        .result-value {
+            font-size: 20px;
+        }
+    </style>
+
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <span class="navbar-brand mb-0 h1">MoodSense</span>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mx-auto">
+                <div class="card upload-form">
+                    <h1 class="card-header title">Upload an audio file</h1>
+                    <div class="card-body">
+                        <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                            <div class="custom-file mb-3">
+                                <input type="file" class="custom-file-input" id="audio_file" name="audio_file" onchange="updateFileName(this)">
+                                <label class="custom-file-label" for="audio_file">Choose file</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary upload-button">Upload</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card result-box">
+                    <div class="card-body">
+                        <h2 class="result-label">Predicted Emotion and Gender:</h2>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Emotion</th>
+                                    <th scope="col">Gender</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td id="predicted_emotion"></td>
+                                    <td id="predicted_gender"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function updateFileName(input) {
+            var fileName = input.files[0].name;
+            $(input).siblings('.custom-file-label').text(fileName);
+        }
+
+        $(document).ready(function () {
+            $('#uploadForm').on('submit', function (e) {
+                e.preventDefault();
+
+                // Create a FormData object to store the form data
+                var formData = new FormData(this);
+
+                // Send an AJAX request to the Flask endpoint for prediction
+                $.ajax({
+                    type: 'POST',
+                    url: '/predict',
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        // Update the HTML content with the predicted emotion and gender
+                        $('#predicted_emotion').text(response.emotion);
+                        $('#predicted_gender').text(response.gender);
+                    },
+                    error: function (error) {
+                        // Display an error message if something went wrong
+                        console.log(error);
+                        alert('Error: ' + error.responseJSON.error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
